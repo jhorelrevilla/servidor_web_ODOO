@@ -1,9 +1,140 @@
-<!DOCTYPE>
-<html>
-    <head>
-        
+<!DOCTYPE html>
+<html lang="es">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+        *{
+            margin: 0%;
+            padding: 0%;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.1rem;
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            background-color: #343a40;
+        }
+        main{
+            margin-top: 30px;
+            width: 80vw;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            border-radius: 8px;
+            padding: 5% 0 10px 0;
+        }
+        table{
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+        table tr:not(:last-child){
+            border-bottom: 1px #212529 solid;
+        }
+        td{
+            padding: 5px 0 5px 0;
+        }
+        select{
+            height: 100%;
+            width: 100%;
+        }
+        button, input[type="submit"]{
+            color: #f8f9fa;
+            background-color: #212529;
+            width: 100%;
+            border: 1px #212529 solid;
+            padding: 10px 0 10px 0;
+            font-size: 1.2rem;
+            font-weight: bolder;
+        }
+        button:hover, input[type="submit"]:hover{
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .report-name{
+            text-align: center;
+        }
+        #report-print-form{
+            width: 80%;
+        }
+    </style>
+    <head> 
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        
+        <main>
+            <form id="report-print-form" action="/save_conf" method="POST">
+                <table>
+                {% for report in report_list %}
+                    <tr>
+                        <td class="report-name">
+                            {{report}}
+                        </td>
+                        <td>
+                            <select name="{{report}}">
+                                {% for printer in print_list %}
+                                <option value="{{printer}}">{{printer}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+                <input id="submit_button" type="submit" value="GUARDAR">
+            </form>
+        </main>
     </body>
+    <script>
+        document.getElementById('report-print-form').addEventListener('submit',function(e){
+            const button=document.getElementById('submit_button');
+            e.preventDefault();
+            const fields=this.elements;
+            var data={};
+            for(var id=0;id<fields.length;++id){
+                field=fields[id];
+                if(field.name){
+                    data[field.name]=field.value;
+                }
+            }
+            
+            fetch('/save_conf',{
+                method:'POST',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify(data)
+            })
+            .then(Response=>Response.json())
+            .then(data=>{
+                console.log('llegue bien ',data);
+                button.style.backgroundColor='#6a994e'
+            })
+            .catch(error=>{
+                console.log('error')
+                button.style.backgroundColor='#bc4749'
+            });
+        
+
+        })
+        const sen_data = () =>{
+            data={
+                'name':'test.pdf'
+            }
+            fetch('/receive_message',{
+                method:'POST',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify(data)
+            })
+            .then(Response=>Response.json())
+            .then(data=>{
+                console.log('llegue bien ',data);
+            })
+            .catch(error=>{
+                console.log('error')
+
+            });
+        }
+    </script>
 </html>
