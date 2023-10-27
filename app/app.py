@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for,jsonify,json
+from flask_cors import CORS
 import models.printer_utils as utils
 import models.json_utils as jsonUtils
 import models.binary_utils as binUtils
 import os
-
+import base64
 
 # Directorio de la data
 site_root=os.path.realpath(os.path.dirname(__file__))
@@ -11,7 +12,10 @@ data_dir=os.path.join(site_root,'data','data.json')
 # Cargar la data
 data=jsonUtils.loadJson(data_dir)
 
+print(data)
+
 app = Flask(__name__)
+CORS(app)
 
 test_dir=os.path.join(site_root,'test','prueba1.pdf')
 test_binary=binUtils.PdfTobinary(test_dir)
@@ -54,26 +58,38 @@ def saveConf():
     # print("nueva data", data)
     
     jsonUtils.writeJson(data,data_dir)
-    
-    print_document(test_binary,'EPSON L355 Series')
 
     return jsonify({'mensaje': 'Los datos se han guardado correctamente'}) 
 
 @app.route("/receive_message",methods=['POST'])
 def receiveMessage():
     global data
-    """
-    {
-        'type_file': 'Factura',
-        'content': binario
-    }
-    """
-    data=request.get_json()
+    data_from_odoo=request.get_json()
+    print("mensaje recibido", request.get_json())
+    # Si el mensaje no tiene esa estructura
+    if not data_from_odoo.get('type') or not data_from_odoo.get('content'):
+        return jsonify({'error': 'Error interno'})
+    tipo=str(data_from_odoo.get('type'))
+    content=data_from_odoo.get('content')
+    
+    if tipo == 'Factura':
+        # Obtener binario del URL
+        import requests
+        response = requests.get(content)
+        
+        pdf_binary_content = response.content
+        
+        print_document("pdf_binary_content",data['Factura'])
+        
 
-
-    print("mensaje recibido", data)
+    if tipo == 'Cotizacion':
+        content = content.encode('utf-8')
+        content=base64.decodebytes(content)
+        print_document(content,data['Cotizacion'])
+        
     return jsonify({'mensaje': 'Los datos se han guardado correctamente'}) 
+
 
 # -----------------------
 if __name__ == "__main__":
-    app.run(debug=True,port=12345,host='201.230.200.202')
+    app.run(host='127.0.0.1',debug=True,port=8080)
