@@ -9,5 +9,7 @@ def local_printer_list():
     return [(printer[2]) for printer in EnumPrinters(2)]
 """ Funcion mandar a imprimir PDF """
 def send_pdf_to_printer(pdf_name,printer_name,pdfToPrinter_dir):
-    command = "{} {}".format(pdfToPrinter_dir,f'{pdf_name}',f'{printer_name}')
+    # command = "{} {}".format(pdfToPrinter_dir,f'{pdf_name}',f'{printer_name}')
+    command=f'"{pdfToPrinter_dir}" "{pdf_name}" "{printer_name}"'
+    print(f"command {command}")
     call(command,shell=True)

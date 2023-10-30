@@ -1,2 +1,2 @@
-env\Scripts\activate.bat
-call python app.py
+cd /d %~dp0
+call python\python.exe app.py

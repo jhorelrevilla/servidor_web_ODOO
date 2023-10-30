@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+* {
+  margin: 0%;
+  padding: 0%;
+  font-family: "Roboto", sans-serif;
+  font-size: 1.1rem;
+}
+body {
+  display: flex;
+  justify-content: center;
+  background-color: #343a40;
+}
+main {
+  margin-top: 30px;
+  width: 80vw;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 5% 0 10px 0;
+}
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+table tr:not(:last-child) {
+  border-bottom: 1px #212529 solid;
+}
+td {
+  padding: 5px 0 5px 0;
+}
+select {
+  height: 100%;
+  width: 100%;
+}
+button,
+input[type="submit"] {
+  color: #f8f9fa;
+  background-color: #212529;
+  width: 100%;
+  border: 1px #212529 solid;
+  padding: 10px 0 10px 0;
+  font-size: 1.2rem;
+  font-weight: bolder;
+}
+button:hover,
+input[type="submit"]:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+.report-name {
+  text-align: center;
+}
+#report-print-form {
+  width: 80%;
+}
